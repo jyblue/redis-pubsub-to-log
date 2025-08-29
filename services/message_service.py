@@ -91,9 +91,34 @@ class MessageService:
             # 한 줄 로그 메시지 생성
             log_message = f"{timestamp} [{channel}/{key_value}] {json.dumps(message_data, ensure_ascii=False)}"
             
-            # 파일에 로그 기록
-            with open(log_file_path, 'a', encoding='utf-8') as f:
-                f.write(log_message + '\n')
+            # RotatingFileHandler를 사용하여 로그 기록
+            from logging.handlers import RotatingFileHandler
+            import logging
+            
+            # 로거 생성
+            message_logger = logging.getLogger(f'message_{channel}_{key_value}')
+            message_logger.setLevel(logging.INFO)
+            
+            # 기존 핸들러 제거
+            for handler in message_logger.handlers[:]:
+                message_logger.removeHandler(handler)
+            
+            # 파일 핸들러 설정
+            file_handler = RotatingFileHandler(
+                log_file_path,
+                maxBytes=Config.LOG_FILE_SIZE_MB * 1024 * 1024,
+                backupCount=Config.LOG_BACKUP_COUNT,
+                encoding='utf-8'
+            )
+            file_handler.setLevel(logging.INFO)
+            
+            # 포맷터 설정 (타임스탬프 제거, 메시지만 기록)
+            formatter = logging.Formatter('%(message)s')
+            file_handler.setFormatter(formatter)
+            message_logger.addHandler(file_handler)
+            
+            # 로그 기록
+            message_logger.info(log_message)
             
             # 콘솔에도 출력
             self.logger.info(log_message)
