@@ -56,6 +56,14 @@ export KEY_FIELD=id
 python main.py
 ```
 
+### 4. 테스트
+
+별도 터미널에서 테스트 스크립트를 실행하여 메시지를 발행할 수 있습니다:
+
+```bash
+python test_redis_pubsub.py
+```
+
 ## 설정
 
 ### 기본 설정 (config.py)
