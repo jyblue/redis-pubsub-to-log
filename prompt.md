@@ -48,3 +48,11 @@
 - 10초마다 메시지 수신 대기 메시지 출력
 - 콘솔에만 출력하도록 구현
 - 설정으로 on/off 제어 가능
+
+## PROMPT-007
+**명령**: redis retry에 exponential backoff을 사용하도록 수정하세요.
+
+**수행 작업**:
+- Redis 재연결 시 exponential backoff 알고리즘 구현
+- 설정 파일에 exponential backoff 관련 설정 추가
+- 재시도 간격이 지수적으로 증가하도록 수정

@@ -20,6 +20,7 @@ class RedisService:
         self.heartbeat_thread = None
         self.last_message_time = time.time()
         self.running = False
+        self.reconnect_attempts = 0
         self._connect()
     
     def _connect(self):
@@ -84,7 +85,8 @@ class RedisService:
     
     def _reconnect(self):
         """Redis 재연결을 시도합니다."""
-        self.logger.info("Redis 재연결 시도 중...")
+        self.reconnect_attempts += 1
+        self.logger.info(f"Redis 재연결 시도 중... (시도 {self.reconnect_attempts})")
         
         try:
             if self.pubsub:
@@ -93,14 +95,34 @@ class RedisService:
             if self.redis_client:
                 self.redis_client.close()
             
-            time.sleep(1)  # 잠시 대기
+            # Exponential backoff 적용
+            delay = self._calculate_backoff_delay()
+            self.logger.info(f"재연결 대기 시간: {delay:.2f}초")
+            time.sleep(delay)
+            
             self._connect()
             self.subscribe_all_channels()
             
+            # 재연결 성공 시 카운터 리셋
+            self.reconnect_attempts = 0
             self.logger.info("Redis 재연결 성공")
         except Exception as e:
             self.logger.error(f"Redis 재연결 실패: {str(e)}")
             raise
+    
+    def _calculate_backoff_delay(self) -> float:
+        """Exponential backoff 지연 시간을 계산합니다."""
+        if not self.config.REDIS_EXPONENTIAL_BACKOFF_ENABLED:
+            return self.config.REDIS_BACKOFF
+        
+        # Exponential backoff 공식: base_delay * (multiplier ^ (attempt - 1))
+        delay = self.config.REDIS_EXPONENTIAL_BACKOFF_BASE_DELAY * (
+            self.config.REDIS_EXPONENTIAL_BACKOFF_MULTIPLIER ** (self.reconnect_attempts - 1)
+        )
+        
+        # 최대 지연 시간 제한
+        max_delay = self.config.REDIS_EXPONENTIAL_BACKOFF_MAX_DELAY
+        return min(delay, max_delay)
     
     def _start_heartbeat(self):
         """Heartbeat 스레드를 시작합니다."""

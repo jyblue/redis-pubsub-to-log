@@ -83,6 +83,22 @@ class Config:
         return self._config_data['redis']['backoff']
     
     @property
+    def REDIS_EXPONENTIAL_BACKOFF_ENABLED(self) -> bool:
+        return self._config_data['redis']['exponential_backoff']['enabled']
+    
+    @property
+    def REDIS_EXPONENTIAL_BACKOFF_BASE_DELAY(self) -> float:
+        return self._config_data['redis']['exponential_backoff']['base_delay']
+    
+    @property
+    def REDIS_EXPONENTIAL_BACKOFF_MAX_DELAY(self) -> float:
+        return self._config_data['redis']['exponential_backoff']['max_delay']
+    
+    @property
+    def REDIS_EXPONENTIAL_BACKOFF_MULTIPLIER(self) -> float:
+        return self._config_data['redis']['exponential_backoff']['multiplier']
+    
+    @property
     def LOG_DIR(self) -> str:
         return self._config_data['logging']['log_dir']
     

@@ -7,7 +7,13 @@
     "retry_on_timeout": true,
     "retry_on_error": true,
     "retry": 3,
-    "backoff": 0.1
+    "backoff": 0.1,
+    "exponential_backoff": {
+      "enabled": true,
+      "base_delay": 1.0,
+      "max_delay": 60.0,
+      "multiplier": 2.0
+    }
   },
   "logging": {
     "log_dir": "logs",
