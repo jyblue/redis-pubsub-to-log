@@ -1,0 +1,21 @@
+{
+  "redis": {
+    "host": "localhost",
+    "port": 6379,
+    "db": 0,
+    "password": null,
+    "retry_on_timeout": true,
+    "retry_on_error": true,
+    "retry": 3,
+    "backoff": 0.1
+  },
+  "logging": {
+    "log_dir": "logs",
+    "log_file_size_mb": 10,
+    "log_backup_count": 5
+  },
+  "filtering": {
+    "file_filter_condition": "*.log",
+    "key_field": "id"
+  }
+}

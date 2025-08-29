@@ -38,16 +38,19 @@ redis-pubsub-to-log/
 pip install -r requirements.txt
 ```
 
-### 2. 환경 변수 설정 (선택사항)
+### 2. 설정 파일 생성 (선택사항)
+
+기본 설정 파일 `config/default.json`이 제공됩니다. 필요에 따라 수정하거나 새로운 설정 파일을 생성할 수 있습니다.
 
 ```bash
-export REDIS_HOST=localhost
-export REDIS_PORT=6379
-export REDIS_DB=0
-export REDIS_PASSWORD=your_password
-export LOG_DIR=logs
-export FILE_FILTER_CONDITION="*.log"
-export KEY_FIELD=id
+# 기본 설정 파일 사용
+python main.py
+
+# 사용자 정의 설정 파일 사용
+python main.py --config my_config.json
+
+# 또는
+python main.py -c my_config.json
 ```
 
 ### 3. 애플리케이션 실행
@@ -73,17 +76,49 @@ python test_redis_pubsub.py
 - **로깅 설정**: 로그 디렉토리, 파일 크기, 백업 개수
 - **필터링 설정**: 파일 필터 조건, 키 필드명
 
-### 환경 변수
+### 설정 파일 구조
 
-| 변수명 | 기본값 | 설명 |
-|--------|--------|------|
-| REDIS_HOST | localhost | Redis 서버 호스트 |
-| REDIS_PORT | 6379 | Redis 서버 포트 |
-| REDIS_DB | 0 | Redis 데이터베이스 번호 |
-| REDIS_PASSWORD | None | Redis 비밀번호 |
-| LOG_DIR | logs | 로그 저장 디렉토리 |
-| FILE_FILTER_CONDITION | *.log | 파일 필터 조건 |
-| KEY_FIELD | id | JSON에서 폴더명으로 사용할 필드 |
+```json
+{
+  "redis": {
+    "host": "localhost",
+    "port": 6379,
+    "db": 0,
+    "password": null,
+    "retry_on_timeout": true,
+    "retry_on_error": true,
+    "retry": 3,
+    "backoff": 0.1
+  },
+  "logging": {
+    "log_dir": "logs",
+    "log_file_size_mb": 10,
+    "log_backup_count": 5
+  },
+  "filtering": {
+    "file_filter_condition": "*.log",
+    "key_field": "id"
+  }
+}
+```
+
+### 설정 항목
+
+| 섹션 | 항목 | 기본값 | 설명 |
+|------|------|--------|------|
+| redis.host | localhost | Redis 서버 호스트 |
+| redis.port | 6379 | Redis 서버 포트 |
+| redis.db | 0 | Redis 데이터베이스 번호 |
+| redis.password | null | Redis 비밀번호 |
+| redis.retry_on_timeout | true | 타임아웃 시 재시도 여부 |
+| redis.retry_on_error | true | 오류 시 재시도 여부 |
+| redis.retry | 3 | 재시도 횟수 |
+| redis.backoff | 0.1 | 재시도 간격 (초) |
+| logging.log_dir | logs | 로그 저장 디렉토리 |
+| logging.log_file_size_mb | 10 | 로그 파일 최대 크기 (MB) |
+| logging.log_backup_count | 5 | 백업 파일 개수 |
+| filtering.file_filter_condition | *.log | 파일 필터 조건 |
+| filtering.key_field | id | JSON에서 폴더명으로 사용할 필드 |
 
 ## 메시지 형식
 

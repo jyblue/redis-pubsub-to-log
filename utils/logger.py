@@ -13,7 +13,8 @@ class Logger:
     
     def __init__(self, name: str, log_dir: str = None):
         self.name = name
-        self.log_dir = log_dir or Config.LOG_DIR
+        config = Config()
+        self.log_dir = log_dir or config.LOG_DIR
         self.logger = self._setup_logger()
     
     def _setup_logger(self) -> logging.Logger:
@@ -41,10 +42,11 @@ class Logger:
         # Windows 호환 파일 경로
         log_file_path = os.path.join(self.log_dir, f'{self.name}.log')
         
+        config = Config()
         file_handler = RotatingFileHandler(
             log_file_path,
-            maxBytes=Config.LOG_FILE_SIZE_MB * 1024 * 1024,  # MB to bytes
-            backupCount=Config.LOG_BACKUP_COUNT,
+            maxBytes=config.LOG_FILE_SIZE_MB * 1024 * 1024,  # MB to bytes
+            backupCount=config.LOG_BACKUP_COUNT,
             encoding='utf-8'
         )
         file_handler.setLevel(logging.INFO)

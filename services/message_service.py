@@ -20,9 +20,10 @@ class MessageService:
     
     def _ensure_log_directories(self):
         """로그 디렉토리가 존재하는지 확인하고 생성합니다."""
-        if not os.path.exists(Config.LOG_DIR):
-            os.makedirs(Config.LOG_DIR)
-            self.logger.info(f"로그 디렉토리 생성: {Config.LOG_DIR}")
+        config = Config()
+        if not os.path.exists(config.LOG_DIR):
+            os.makedirs(config.LOG_DIR)
+            self.logger.info(f"로그 디렉토리 생성: {config.LOG_DIR}")
     
     def process_message(self, channel: str, message: str):
         """
@@ -55,7 +56,8 @@ class MessageService:
             safe_key_value = self.filter.sanitize_folder_name(key_value)
             
             # 폴더 경로 생성
-            folder_path = os.path.join(Config.LOG_DIR, safe_channel, safe_key_value)
+            config = Config()
+            folder_path = os.path.join(config.LOG_DIR, safe_channel, safe_key_value)
             self._ensure_folder_exists(folder_path)
             
             # 날짜별 로그 파일 경로
@@ -104,10 +106,11 @@ class MessageService:
                 message_logger.removeHandler(handler)
             
             # 파일 핸들러 설정
+            config = Config()
             file_handler = RotatingFileHandler(
                 log_file_path,
-                maxBytes=Config.LOG_FILE_SIZE_MB * 1024 * 1024,
-                backupCount=Config.LOG_BACKUP_COUNT,
+                maxBytes=config.LOG_FILE_SIZE_MB * 1024 * 1024,
+                backupCount=config.LOG_BACKUP_COUNT,
                 encoding='utf-8'
             )
             file_handler.setLevel(logging.INFO)

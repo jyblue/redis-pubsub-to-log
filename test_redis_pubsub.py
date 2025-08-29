@@ -12,10 +12,11 @@ def test_redis_pubsub():
     """Redis PubSub 테스트"""
     try:
         # Redis 연결
-        r = redis.Redis(**Config.get_redis_config())
+        config = Config()
+        r = redis.Redis(**config.get_redis_config())
         
         print("Redis PubSub 테스트 시작...")
-        print(f"Redis 서버: {Config.REDIS_HOST}:{Config.REDIS_PORT}")
+        print(f"Redis 서버: {config.REDIS_HOST}:{config.REDIS_PORT}")
         
         # 테스트 메시지들
         test_messages = [

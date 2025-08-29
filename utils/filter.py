@@ -12,7 +12,8 @@ class MessageFilter:
     """메시지 필터링 클래스"""
     
     def __init__(self, file_filter_condition: str = None):
-        self.file_filter_condition = file_filter_condition or Config.FILE_FILTER_CONDITION
+        config = Config()
+        self.file_filter_condition = file_filter_condition or config.FILE_FILTER_CONDITION
     
     def should_process_message(self, message_data: Dict[str, Any]) -> bool:
         """
@@ -47,7 +48,8 @@ class MessageFilter:
         Returns:
             str: 키 값 (없으면 None)
         """
-        key_field = Config.KEY_FIELD
+        config = Config()
+        key_field = config.KEY_FIELD
         
         if key_field not in message_data:
             return None
