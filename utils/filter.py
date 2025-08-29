@@ -3,17 +3,18 @@
 """
 import json
 import re
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional, List, Union
 from config import Config
 
 
 class MessageFilter:
     """메시지 필터링 클래스"""
     
-    def __init__(self, target_field: str = None, target_values: List[str] = None):
+    def __init__(self, target_field: str = None, target_values: List[str] = None, use_regex: bool = None):
         self.config = Config()
         self.target_field = target_field or self.config.TARGET_FIELD
         self.target_values = target_values or self.config.TARGET_VALUES
+        self.use_regex = use_regex if use_regex is not None else self.config.USE_REGEX
     
     def should_process_message(self, message_data: Dict[str, Any]) -> bool:
         """
@@ -35,8 +36,33 @@ class MessageFilter:
         if not isinstance(target_value, str):
             return False
         
-        # target 값이 설정된 값들 중 하나와 일치하는지 확인
-        return target_value in self.target_values
+        # 정규 표현식 또는 일반 문자열 매칭으로 확인
+        return self._matches_target_values(target_value)
+    
+    def _matches_target_values(self, target_value: str) -> bool:
+        """
+        target 값이 설정된 값들과 일치하는지 확인합니다.
+        
+        Args:
+            target_value: 확인할 target 값
+            
+        Returns:
+            bool: 일치 여부
+        """
+        if self.use_regex:
+            # 정규 표현식 매칭
+            for pattern in self.target_values:
+                try:
+                    if re.match(pattern, target_value):
+                        return True
+                except re.error as e:
+                    # 잘못된 정규 표현식은 무시하고 로그 출력
+                    print(f"경고: 잘못된 정규 표현식 '{pattern}': {e}")
+                    continue
+            return False
+        else:
+            # 일반 문자열 매칭
+            return target_value in self.target_values
     
     def extract_key_value(self, message_data: Dict[str, Any]) -> Optional[str]:
         """

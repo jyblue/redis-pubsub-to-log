@@ -131,6 +131,10 @@ class Config:
     def KEY_FIELD(self) -> str:
         return self._get_nested_value('filtering', 'key_field')
     
+    @property
+    def USE_REGEX(self) -> bool:
+        return self._get_nested_value('filtering', 'use_regex', default=False)
+    
     # Heartbeat 설정
     @property
     def HEARTBEAT_ENABLED(self) -> bool:

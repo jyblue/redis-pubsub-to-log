@@ -129,8 +129,9 @@ python test_redis_pubsub.py
 | logging.log_file_size_mb | 10 | 로그 파일 최대 크기 (MB) |
 | logging.log_backup_count | 5 | 백업 파일 개수 |
 | filtering.target_field | target | 필터링 대상 필드명 |
-| filtering.target_values | ["STATUS", "EVENT"] | 처리할 target 값 목록 |
+| filtering.target_values | ["STATUS", "EVENT"] | 처리할 target 값 목록 (정규 표현식 지원) |
 | filtering.key_field | id | JSON에서 폴더명으로 사용할 필드 |
+| filtering.use_regex | false | 정규 표현식 사용 여부 |
 | heartbeat.enabled | true | Heartbeat 메시지 출력 여부 |
 | heartbeat.interval_seconds | 10 | Heartbeat 메시지 출력 간격 (초) |
 
@@ -173,9 +174,38 @@ message/                 # Redis 메시지 로그
 
 ## 필터링 조건
 
-- `file` 필드가 존재해야 함
-- `file` 값이 `FILE_FILTER_CONDITION` 패턴과 일치해야 함
+- `target` 필드가 존재해야 함
+- `target` 값이 `target_values`와 일치해야 함
 - `KEY_FIELD`로 지정된 필드가 존재해야 함
+
+### 정규 표현식 지원
+
+`use_regex: true`로 설정하면 `target_values`를 정규 표현식으로 처리합니다.
+
+#### 일반 문자열 매칭 (기본값)
+```json
+{
+  "filtering": {
+    "target_values": ["STATUS", "EVENT"],
+    "use_regex": false
+  }
+}
+```
+
+#### 정규 표현식 매칭
+```json
+{
+  "filtering": {
+    "target_values": ["^ERROR.*", "^WARN.*", "STATUS"],
+    "use_regex": true
+  }
+}
+```
+
+**예시**:
+- `"ERROR_CRITICAL"` → `^ERROR.*` 패턴과 일치
+- `"WARN_IMPORTANT"` → `^WARN.*` 패턴과 일치
+- `"STATUS"` → `STATUS` 패턴과 일치
 
 ## 로그 Rolling
 

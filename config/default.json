@@ -26,6 +26,7 @@
   "filtering": {
     "target_field": "target",
     "target_values": ["STATUS", "EVENT"],
-    "key_field": "id"
+    "key_field": "id",
+    "use_regex": false
   }
 }

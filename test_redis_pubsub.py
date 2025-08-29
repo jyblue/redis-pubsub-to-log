@@ -43,6 +43,18 @@ def test_redis_pubsub():
                 "target": "INFO",  # 필터링 조건 불만족
                 "message": "필터링되지 않을 메시지",
                 "timestamp": "2024-01-01T12:03:00Z"
+            },
+            {
+                "id": "user101",
+                "target": "ERROR_CRITICAL",
+                "message": "정규 표현식 테스트 메시지",
+                "timestamp": "2024-01-01T12:04:00Z"
+            },
+            {
+                "id": "user102",
+                "target": "WARN_IMPORTANT",
+                "message": "정규 표현식 테스트 메시지 2",
+                "timestamp": "2024-01-01T12:05:00Z"
             }
         ]
         
