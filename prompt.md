@@ -16,3 +16,26 @@
 - JSON 설정 파일에 메시지 로그 경로 설정 추가
 - 기본 경로를 message/{channel_name}/{key_value}로 변경
 - 절대 경로 지원을 위한 설정 추가
+
+## PROMPT-003
+**명령**: fnmatch에 대해 설명하세요.
+
+**수행 작업**:
+- fnmatch 모듈의 기능과 사용법 설명
+- 현재 프로젝트에서의 활용 사례 설명
+
+## PROMPT-004
+**명령**: file_filter_condition 항목을 수정하세요. filtering 로직은 다음과 같은 형식 입니다. "target" 이라는 필드의 값이 "STATUS"인 경우, "target"이라는 필드의 값이 "EVENT"인 경우 등입니다.
+
+**수행 작업**:
+- file_filter_condition을 target 필드 기반 필터링으로 변경
+- 필터링 로직을 fnmatch에서 특정 필드 값 비교로 수정
+- 설정 파일 구조 업데이트
+
+## PROMPT-005
+**명령**: config 기본 값을 반환하는 하드코딩 함수를 삭제하세요. config file이 없는 경우 에러 메시지를 출력하고 어플리케이션이 종료되어야 합니다.
+
+**수행 작업**:
+- _get_default_config 함수 삭제
+- 설정 파일이 없을 때 에러 메시지 출력 후 애플리케이션 종료
+- 기본값 하드코딩 제거

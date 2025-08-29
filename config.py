@@ -4,6 +4,7 @@ Redis PubSub 로깅 시스템 설정
 import os
 import json
 import argparse
+import sys
 from typing import Dict, Any
 
 
@@ -39,94 +40,75 @@ class Config:
             with open(args.config, 'r', encoding='utf-8') as f:
                 self._config_data = json.load(f)
         except FileNotFoundError:
-            print(f"설정 파일을 찾을 수 없습니다: {args.config}")
-            print("기본 설정을 사용합니다.")
-            self._config_data = self._get_default_config()
+            print(f"오류: 설정 파일을 찾을 수 없습니다: {args.config}")
+            print("애플리케이션을 종료합니다.")
+            sys.exit(1)
         except json.JSONDecodeError as e:
-            print(f"설정 파일 JSON 파싱 오류: {e}")
-            print("기본 설정을 사용합니다.")
-            self._config_data = self._get_default_config()
+            print(f"오류: 설정 파일 JSON 파싱 오류: {e}")
+            print("애플리케이션을 종료합니다.")
+            sys.exit(1)
     
-    def _get_default_config(self) -> Dict[str, Any]:
-        """기본 설정을 반환합니다."""
-        return {
-            "redis": {
-                "host": "localhost",
-                "port": 6379,
-                "db": 0,
-                "password": None,
-                "retry_on_timeout": True,
-                "retry_on_error": True,
-                "retry": 3,
-                "backoff": 0.1
-            },
-            "logging": {
-                "log_dir": "logs",
-                "message_log_dir": "message",
-                "log_file_size_mb": 10,
-                "log_backup_count": 5
-            },
-            "filtering": {
-                "file_filter_condition": "*.log",
-                "key_field": "id"
-            }
-        }
+
     
     @property
     def REDIS_HOST(self) -> str:
-        return self._config_data.get('redis', {}).get('host', 'localhost')
+        return self._config_data['redis']['host']
     
     @property
     def REDIS_PORT(self) -> int:
-        return self._config_data.get('redis', {}).get('port', 6379)
+        return self._config_data['redis']['port']
     
     @property
     def REDIS_DB(self) -> int:
-        return self._config_data.get('redis', {}).get('db', 0)
+        return self._config_data['redis']['db']
     
     @property
     def REDIS_PASSWORD(self):
-        return self._config_data.get('redis', {}).get('password')
+        return self._config_data['redis'].get('password')
     
     @property
     def REDIS_RETRY_ON_TIMEOUT(self) -> bool:
-        return self._config_data.get('redis', {}).get('retry_on_timeout', True)
+        return self._config_data['redis']['retry_on_timeout']
     
     @property
     def REDIS_RETRY_ON_ERROR(self) -> bool:
-        return self._config_data.get('redis', {}).get('retry_on_error', True)
+        return self._config_data['redis']['retry_on_error']
     
     @property
     def REDIS_RETRY(self) -> int:
-        return self._config_data.get('redis', {}).get('retry', 3)
+        return self._config_data['redis']['retry']
     
     @property
     def REDIS_BACKOFF(self) -> float:
-        return self._config_data.get('redis', {}).get('backoff', 0.1)
+        return self._config_data['redis']['backoff']
     
     @property
     def LOG_DIR(self) -> str:
-        return self._config_data.get('logging', {}).get('log_dir', 'logs')
+        return self._config_data['logging']['log_dir']
     
     @property
     def MESSAGE_LOG_DIR(self) -> str:
-        return self._config_data.get('logging', {}).get('message_log_dir', 'message')
+        return self._config_data['logging']['message_log_dir']
     
     @property
     def LOG_FILE_SIZE_MB(self) -> int:
-        return self._config_data.get('logging', {}).get('log_file_size_mb', 10)
+        return self._config_data['logging']['log_file_size_mb']
     
     @property
     def LOG_BACKUP_COUNT(self) -> int:
-        return self._config_data.get('logging', {}).get('log_backup_count', 5)
+        return self._config_data['logging']['log_backup_count']
     
     @property
-    def FILE_FILTER_CONDITION(self) -> str:
-        return self._config_data.get('filtering', {}).get('file_filter_condition', '*.log')
+    def TARGET_FIELD(self) -> str:
+        return self._config_data['filtering']['target_field']
+    
+    @property
+    def TARGET_VALUES(self) -> list:
+        return self._config_data['filtering']['target_values']
     
     @property
     def KEY_FIELD(self) -> str:
-        return self._config_data.get('filtering', {}).get('key_field', 'id')
+        return self._config_data['filtering']['key_field']
     
     def get_redis_config(self) -> Dict[str, Any]:
         """Redis 연결 설정을 반환합니다."""

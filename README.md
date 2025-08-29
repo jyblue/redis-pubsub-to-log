@@ -38,9 +38,9 @@ redis-pubsub-to-log/
 pip install -r requirements.txt
 ```
 
-### 2. 설정 파일 생성 (선택사항)
+### 2. 설정 파일 준비
 
-기본 설정 파일 `config/default.json`이 제공됩니다. 필요에 따라 수정하거나 새로운 설정 파일을 생성할 수 있습니다.
+설정 파일이 필수입니다. 기본 설정 파일 `config/default.json`이 제공되며, 필요에 따라 수정하거나 새로운 설정 파일을 생성할 수 있습니다.
 
 ```bash
 # 기본 설정 파일 사용
@@ -52,6 +52,8 @@ python main.py --config my_config.json
 # 또는
 python main.py -c my_config.json
 ```
+
+**주의**: 설정 파일이 없거나 JSON 형식이 잘못된 경우 애플리케이션이 종료됩니다.
 
 ### 3. 애플리케이션 실행
 
@@ -97,7 +99,8 @@ python test_redis_pubsub.py
     "log_backup_count": 5
   },
   "filtering": {
-    "file_filter_condition": "*.log",
+    "target_field": "target",
+    "target_values": ["STATUS", "EVENT"],
     "key_field": "id"
   }
 }
@@ -119,7 +122,8 @@ python test_redis_pubsub.py
 | logging.message_log_dir | message | Redis 메시지 로그 저장 디렉토리 |
 | logging.log_file_size_mb | 10 | 로그 파일 최대 크기 (MB) |
 | logging.log_backup_count | 5 | 백업 파일 개수 |
-| filtering.file_filter_condition | *.log | 파일 필터 조건 |
+| filtering.target_field | target | 필터링 대상 필드명 |
+| filtering.target_values | ["STATUS", "EVENT"] | 처리할 target 값 목록 |
 | filtering.key_field | id | JSON에서 폴더명으로 사용할 필드 |
 
 ## 메시지 형식
@@ -129,7 +133,7 @@ python test_redis_pubsub.py
 ```json
 {
   "id": "user123",
-  "file": "app.log",
+  "target": "STATUS",
   "message": "로그 메시지",
   "timestamp": "2024-01-01T12:00:00Z"
 }
@@ -155,8 +159,8 @@ message/                 # Redis 메시지 로그
 ### 로그 파일 내용
 
 ```
-2024-01-01 12:00:00 [channel1/user123] {"id": "user123", "file": "app.log", "message": "로그 메시지", "timestamp": "2024-01-01T12:00:00Z"}
-2024-01-01 12:01:00 [channel1/user123] {"id": "user123", "file": "app.log", "message": "두 번째 메시지", "timestamp": "2024-01-01T12:01:00Z"}
+2024-01-01 12:00:00 [channel1/user123] {"id": "user123", "target": "STATUS", "message": "로그 메시지", "timestamp": "2024-01-01T12:00:00Z"}
+2024-01-01 12:01:00 [channel1/user123] {"id": "user123", "target": "EVENT", "message": "두 번째 메시지", "timestamp": "2024-01-01T12:01:00Z"}
 ```
 
 ## 필터링 조건

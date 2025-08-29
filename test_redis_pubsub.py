@@ -22,25 +22,25 @@ def test_redis_pubsub():
         test_messages = [
             {
                 "id": "user123",
-                "file": "app.log",
+                "target": "STATUS",
                 "message": "첫 번째 테스트 메시지",
                 "timestamp": "2024-01-01T12:00:00Z"
             },
             {
                 "id": "user456",
-                "file": "error.log",
+                "target": "EVENT",
                 "message": "두 번째 테스트 메시지",
                 "timestamp": "2024-01-01T12:01:00Z"
             },
             {
                 "id": "user789",
-                "file": "debug.log",
+                "target": "STATUS",
                 "message": "세 번째 테스트 메시지",
                 "timestamp": "2024-01-01T12:02:00Z"
             },
             {
                 "id": "user999",
-                "file": "access.txt",  # 필터링 조건 불만족
+                "target": "INFO",  # 필터링 조건 불만족
                 "message": "필터링되지 않을 메시지",
                 "timestamp": "2024-01-01T12:03:00Z"
             }

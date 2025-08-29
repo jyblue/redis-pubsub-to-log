@@ -2,18 +2,18 @@
 메시지 필터링 유틸리티 모듈
 """
 import json
-import fnmatch
 import re
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from config import Config
 
 
 class MessageFilter:
     """메시지 필터링 클래스"""
     
-    def __init__(self, file_filter_condition: str = None):
+    def __init__(self, target_field: str = None, target_values: List[str] = None):
         config = Config()
-        self.file_filter_condition = file_filter_condition or config.FILE_FILTER_CONDITION
+        self.target_field = target_field or config.TARGET_FIELD
+        self.target_values = target_values or config.TARGET_VALUES
     
     def should_process_message(self, message_data: Dict[str, Any]) -> bool:
         """
@@ -25,18 +25,18 @@ class MessageFilter:
         Returns:
             bool: 처리 여부
         """
-        # file 필드가 없으면 처리하지 않음
-        if 'file' not in message_data:
+        # target 필드가 없으면 처리하지 않음
+        if self.target_field not in message_data:
             return False
         
-        file_value = message_data['file']
+        target_value = message_data[self.target_field]
         
-        # 파일명이 문자열이 아니면 처리하지 않음
-        if not isinstance(file_value, str):
+        # target 값이 문자열이 아니면 처리하지 않음
+        if not isinstance(target_value, str):
             return False
         
-        # 파일 필터 조건과 매치되는지 확인
-        return fnmatch.fnmatch(file_value, self.file_filter_condition)
+        # target 값이 설정된 값들 중 하나와 일치하는지 확인
+        return target_value in self.target_values
     
     def extract_key_value(self, message_data: Dict[str, Any]) -> Optional[str]:
         """

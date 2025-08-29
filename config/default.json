@@ -16,7 +16,8 @@
     "log_backup_count": 5
   },
   "filtering": {
-    "file_filter_condition": "*.log",
+    "target_field": "target",
+    "target_values": ["STATUS", "EVENT"],
     "key_field": "id"
   }
 }
