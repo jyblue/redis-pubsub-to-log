@@ -79,14 +79,6 @@ class Config:
         return self._config_data['redis']['retry']
     
     @property
-    def REDIS_BACKOFF(self) -> float:
-        return self._config_data['redis']['backoff']
-    
-    @property
-    def REDIS_EXPONENTIAL_BACKOFF_ENABLED(self) -> bool:
-        return self._config_data['redis']['exponential_backoff']['enabled']
-    
-    @property
     def REDIS_EXPONENTIAL_BACKOFF_BASE_DELAY(self) -> float:
         return self._config_data['redis']['exponential_backoff']['base_delay']
     
@@ -97,18 +89,6 @@ class Config:
     @property
     def REDIS_EXPONENTIAL_BACKOFF_MULTIPLIER(self) -> float:
         return self._config_data['redis']['exponential_backoff']['multiplier']
-    
-    @property
-    def REDIS_CONNECTION_HEARTBEAT_ENABLED(self) -> bool:
-        return self._config_data['redis']['connection_heartbeat']['enabled']
-    
-    @property
-    def REDIS_CONNECTION_HEARTBEAT_INTERVAL_SECONDS(self) -> int:
-        return self._config_data['redis']['connection_heartbeat']['interval_seconds']
-    
-    @property
-    def REDIS_CONNECTION_HEARTBEAT_TIMEOUT_SECONDS(self) -> int:
-        return self._config_data['redis']['connection_heartbeat']['timeout_seconds']
     
     @property
     def LOG_DIR(self) -> str:

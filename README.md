@@ -121,14 +121,9 @@ python test_redis_pubsub.py
 | redis.retry_on_timeout | true | 타임아웃 시 재시도 여부 |
 | redis.retry_on_error | true | 오류 시 재시도 여부 |
 | redis.retry | 3 | 재시도 횟수 |
-| redis.backoff | 0.1 | 재시도 간격 (초) |
-| redis.exponential_backoff.enabled | true | Exponential backoff 사용 여부 |
 | redis.exponential_backoff.base_delay | 1.0 | 기본 지연 시간 (초) |
 | redis.exponential_backoff.max_delay | 60.0 | 최대 지연 시간 (초) |
 | redis.exponential_backoff.multiplier | 2.0 | 지연 시간 배수 |
-| redis.connection_heartbeat.enabled | true | Connection heartbeat 사용 여부 |
-| redis.connection_heartbeat.interval_seconds | 30 | 연결 상태 확인 간격 (초) |
-| redis.connection_heartbeat.timeout_seconds | 5 | 연결 확인 타임아웃 (초) |
 | logging.log_dir | logs | 시스템 로그 저장 디렉토리 |
 | logging.message_log_dir | message | Redis 메시지 로그 저장 디렉토리 |
 | logging.log_file_size_mb | 10 | 로그 파일 최대 크기 (MB) |
@@ -198,10 +193,6 @@ message/                 # Redis 메시지 로그
   - 기본 지연 시간부터 시작하여 지수적으로 증가
   - 최대 지연 시간 제한으로 무한 증가 방지
   - 재연결 성공 시 지연 시간 리셋
-- Connection heartbeat로 연결 상태 주기적 확인
-  - PING 명령으로 연결 상태 모니터링
-  - 연결 끊김 감지 시 자동 재연결
-  - 설정 가능한 확인 간격 및 타임아웃
 
 ## Heartbeat 기능
 

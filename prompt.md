@@ -64,3 +64,11 @@
 - Redis 연결에 heartbeat 기능 추가
 - 연결 상태를 주기적으로 확인하여 끊김 감지
 - 설정 파일에 connection heartbeat 관련 설정 추가
+
+## PROMPT-009
+**명령**: redis backoff을 exponetial backoff만 고정하여 사용하도록 합니다. PROMPT-008에서 구현한 redis connection heartbeat은 삭제하세요.
+
+**수행 작업**:
+- Redis connection heartbeat 기능 삭제
+- Exponential backoff만 사용하도록 수정
+- 기존 backoff 설정 제거
