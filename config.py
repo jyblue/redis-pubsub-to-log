@@ -62,6 +62,7 @@ class Config:
             },
             "logging": {
                 "log_dir": "logs",
+                "message_log_dir": "message",
                 "log_file_size_mb": 10,
                 "log_backup_count": 5
             },
@@ -106,6 +107,10 @@ class Config:
     @property
     def LOG_DIR(self) -> str:
         return self._config_data.get('logging', {}).get('log_dir', 'logs')
+    
+    @property
+    def MESSAGE_LOG_DIR(self) -> str:
+        return self._config_data.get('logging', {}).get('message_log_dir', 'message')
     
     @property
     def LOG_FILE_SIZE_MB(self) -> int:

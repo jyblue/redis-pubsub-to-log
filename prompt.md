@@ -8,3 +8,11 @@
 - 환경 설정을 JSON 파일로부터 입력받도록 수정
 - CLI argument로 JSON 파일 경로 입력받도록 수정
 - 기본 설정 파일 생성
+
+## PROMPT-002
+**명령**: redis 메시지가 저장되는 경로를 json 파일에 설정할 수 있도록 추가하세요. 기본 경로는 message/{channel_name}/{key_value} 입니다. 설정된 경로는 python script를 실행하는 디렉토리 위치와 상관 없이 항상 유지되어야 합니다.
+
+**수행 작업**:
+- JSON 설정 파일에 메시지 로그 경로 설정 추가
+- 기본 경로를 message/{channel_name}/{key_value}로 변경
+- 절대 경로 지원을 위한 설정 추가

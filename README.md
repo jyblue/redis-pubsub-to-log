@@ -92,6 +92,7 @@ python test_redis_pubsub.py
   },
   "logging": {
     "log_dir": "logs",
+    "message_log_dir": "message",
     "log_file_size_mb": 10,
     "log_backup_count": 5
   },
@@ -114,7 +115,8 @@ python test_redis_pubsub.py
 | redis.retry_on_error | true | 오류 시 재시도 여부 |
 | redis.retry | 3 | 재시도 횟수 |
 | redis.backoff | 0.1 | 재시도 간격 (초) |
-| logging.log_dir | logs | 로그 저장 디렉토리 |
+| logging.log_dir | logs | 시스템 로그 저장 디렉토리 |
+| logging.message_log_dir | message | Redis 메시지 로그 저장 디렉토리 |
 | logging.log_file_size_mb | 10 | 로그 파일 최대 크기 (MB) |
 | logging.log_backup_count | 5 | 백업 파일 개수 |
 | filtering.file_filter_condition | *.log | 파일 필터 조건 |
@@ -136,11 +138,16 @@ python test_redis_pubsub.py
 ### 로그 출력 구조
 
 ```
-logs/
+logs/                    # 시스템 로그
+├── Main.log
+├── RedisService.log
+└── MessageService.log
+
+message/                 # Redis 메시지 로그
 ├── channel1/
 │   └── user123/
 │       └── 2024-01-01.log
-└── test_channel_2/  # ":" 문자가 "_"로 대체됨
+└── test_channel_2/      # ":" 문자가 "_"로 대체됨
     └── user456/
         └── 2024-01-01.log
 ```

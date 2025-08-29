@@ -55,9 +55,18 @@ class MessageService:
             safe_channel = self.filter.sanitize_folder_name(channel)
             safe_key_value = self.filter.sanitize_folder_name(key_value)
             
-            # 폴더 경로 생성
+            # 폴더 경로 생성 (절대 경로 지원)
             config = Config()
-            folder_path = os.path.join(config.LOG_DIR, safe_channel, safe_key_value)
+            message_log_dir = config.MESSAGE_LOG_DIR
+            
+            # 절대 경로인지 확인
+            if os.path.isabs(message_log_dir):
+                base_path = message_log_dir
+            else:
+                # 스크립트 실행 디렉토리와 상관없이 항상 유지되도록 현재 작업 디렉토리 기준
+                base_path = os.path.abspath(message_log_dir)
+            
+            folder_path = os.path.join(base_path, safe_channel, safe_key_value)
             self._ensure_folder_exists(folder_path)
             
             # 날짜별 로그 파일 경로
