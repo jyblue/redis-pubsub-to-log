@@ -3,6 +3,7 @@
 """
 import os
 import json
+import datetime
 from typing import Dict, Any
 from utils.logger import Logger
 from utils.filter import MessageFilter
@@ -49,12 +50,17 @@ class MessageService:
                 self.logger.warning(f"키 값 추출 실패: {message}")
                 return
             
+            # 폴더명 정리 (Windows 호환)
+            safe_channel = self.filter.sanitize_folder_name(channel)
+            safe_key_value = self.filter.sanitize_folder_name(key_value)
+            
             # 폴더 경로 생성
-            folder_path = os.path.join(Config.LOG_DIR, channel, key_value)
+            folder_path = os.path.join(Config.LOG_DIR, safe_channel, safe_key_value)
             self._ensure_folder_exists(folder_path)
             
-            # 로그 파일 경로
-            log_file_path = os.path.join(folder_path, 'messages.log')
+            # 날짜별 로그 파일 경로
+            today = datetime.datetime.now().strftime('%Y-%m-%d')
+            log_file_path = os.path.join(folder_path, f'{today}.log')
             
             # 메시지 로깅
             self._log_message(log_file_path, channel, key_value, message_data)
@@ -79,24 +85,18 @@ class MessageService:
             message_data: 메시지 데이터
         """
         try:
-            # 로그 메시지 생성
-            import datetime
-            log_entry = {
-                'timestamp': datetime.datetime.now().isoformat(),
-                'channel': channel,
-                'key': key_value,
-                'message': message_data
-            }
+            # 현재 시간
+            timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             
-            log_message = json.dumps(log_entry, ensure_ascii=False, indent=2)
+            # 한 줄 로그 메시지 생성
+            log_message = f"{timestamp} [{channel}/{key_value}] {json.dumps(message_data, ensure_ascii=False)}"
             
             # 파일에 로그 기록
             with open(log_file_path, 'a', encoding='utf-8') as f:
                 f.write(log_message + '\n')
             
             # 콘솔에도 출력
-            console_message = f"[{channel}/{key_value}] {json.dumps(message_data, ensure_ascii=False)}"
-            self.logger.info(console_message)
+            self.logger.info(log_message)
             
         except Exception as e:
             self.logger.error(f"로그 기록 중 오류: {str(e)}")

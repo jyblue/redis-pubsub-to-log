@@ -38,8 +38,11 @@ class Logger:
         if not os.path.exists(self.log_dir):
             os.makedirs(self.log_dir)
         
+        # Windows 호환 파일 경로
+        log_file_path = os.path.join(self.log_dir, f'{self.name}.log')
+        
         file_handler = RotatingFileHandler(
-            os.path.join(self.log_dir, f'{self.name}.log'),
+            log_file_path,
             maxBytes=Config.LOG_FILE_SIZE_MB * 1024 * 1024,  # MB to bytes
             backupCount=Config.LOG_BACKUP_COUNT,
             encoding='utf-8'

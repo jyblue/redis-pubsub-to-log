@@ -104,26 +104,17 @@ python test_redis_pubsub.py
 logs/
 ├── channel1/
 │   └── user123/
-│       └── messages.log
-└── channel2/
+│       └── 2024-01-01.log
+└── test_channel_2/  # ":" 문자가 "_"로 대체됨
     └── user456/
-        └── messages.log
+        └── 2024-01-01.log
 ```
 
 ### 로그 파일 내용
 
-```json
-{
-  "timestamp": "2024-01-01 12:00:00",
-  "channel": "channel1",
-  "key": "user123",
-  "message": {
-    "id": "user123",
-    "file": "app.log",
-    "message": "로그 메시지",
-    "timestamp": "2024-01-01T12:00:00Z"
-  }
-}
+```
+2024-01-01 12:00:00 [channel1/user123] {"id": "user123", "file": "app.log", "message": "로그 메시지", "timestamp": "2024-01-01T12:00:00Z"}
+2024-01-01 12:01:00 [channel1/user123] {"id": "user123", "file": "app.log", "message": "두 번째 메시지", "timestamp": "2024-01-01T12:01:00Z"}
 ```
 
 ## 필터링 조건
@@ -136,13 +127,20 @@ logs/
 
 - 로그 파일 크기가 10MB에 도달하면 자동으로 새 파일 생성
 - 최대 5개의 백업 파일 유지
-- 파일명 형식: `messages.log`, `messages.log.1`, `messages.log.2`, ...
+- 파일명 형식: `2024-01-01.log`, `2024-01-01.log.1`, `2024-01-01.log.2`, ...
+- 날짜별로 새로운 로그 파일 생성 (`yyyy-mm-dd.log` 형식)
 
 ## Redis 연결 안정성
 
 - 연결 타임아웃 시 자동 재연결
 - 오류 발생 시 백오프 전략으로 재시도
 - 연결 끊김 감지 및 복구
+
+## Windows 호환성
+
+- 채널명과 키 값의 특수문자를 `_`로 대체하여 Windows 폴더명 호환
+- 지원하지 않는 문자: `<`, `>`, `:`, `"`, `/`, `\`, `|`, `?`, `*`
+- 예: `test:channel:2` → `test_channel_2`
 
 ## 개발 가이드
 
@@ -157,7 +155,7 @@ logs/
 
 - **Config**: 설정 관리
 - **Logger**: 로깅 기능
-- **MessageFilter**: 메시지 필터링
+- **MessageFilter**: 메시지 필터링 및 폴더명 정리
 - **RedisService**: Redis 연결 및 PubSub
 - **MessageService**: 메시지 처리 및 로깅
 

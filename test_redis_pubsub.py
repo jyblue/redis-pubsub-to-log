@@ -45,8 +45,8 @@ def test_redis_pubsub():
             }
         ]
         
-        # 각 채널에 메시지 발행
-        channels = ["test_channel_1", "test_channel_2", "test_channel_3"]
+        # 각 채널에 메시지 발행 (Windows 폴더명 테스트 포함)
+        channels = ["test_channel_1", "test:channel:2", "test_channel_3", "test\\channel\\4"]
         
         for i, message in enumerate(test_messages):
             channel = channels[i % len(channels)]

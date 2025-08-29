@@ -3,6 +3,7 @@
 """
 import json
 import fnmatch
+import re
 from typing import Dict, Any, Optional
 from config import Config
 
@@ -58,6 +59,20 @@ class MessageFilter:
             key_value = str(key_value)
         
         return key_value
+    
+    def sanitize_folder_name(self, name: str) -> str:
+        """
+        폴더명으로 사용할 수 없는 문자를 '_'로 대체합니다.
+        
+        Args:
+            name: 원본 이름
+            
+        Returns:
+            str: 폴더명으로 사용 가능한 이름
+        """
+        # Windows에서 폴더명으로 사용할 수 없는 문자들
+        invalid_chars = r'[<>:"/\\|?*]'
+        return re.sub(invalid_chars, '_', name)
     
     def parse_message(self, message: str) -> Optional[Dict[str, Any]]:
         """
