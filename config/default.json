@@ -15,6 +15,10 @@
     "log_file_size_mb": 10,
     "log_backup_count": 5
   },
+  "heartbeat": {
+    "enabled": true,
+    "interval_seconds": 10
+  },
   "filtering": {
     "target_field": "target",
     "target_values": ["STATUS", "EVENT"],

@@ -98,6 +98,10 @@ python test_redis_pubsub.py
     "log_file_size_mb": 10,
     "log_backup_count": 5
   },
+  "heartbeat": {
+    "enabled": true,
+    "interval_seconds": 10
+  },
   "filtering": {
     "target_field": "target",
     "target_values": ["STATUS", "EVENT"],
@@ -125,6 +129,8 @@ python test_redis_pubsub.py
 | filtering.target_field | target | 필터링 대상 필드명 |
 | filtering.target_values | ["STATUS", "EVENT"] | 처리할 target 값 목록 |
 | filtering.key_field | id | JSON에서 폴더명으로 사용할 필드 |
+| heartbeat.enabled | true | Heartbeat 메시지 출력 여부 |
+| heartbeat.interval_seconds | 10 | Heartbeat 메시지 출력 간격 (초) |
 
 ## 메시지 형식
 
@@ -181,6 +187,13 @@ message/                 # Redis 메시지 로그
 - 연결 타임아웃 시 자동 재연결
 - 오류 발생 시 백오프 전략으로 재시도
 - 연결 끊김 감지 및 복구
+
+## Heartbeat 기능
+
+- 메시지가 수신되지 않을 때 주기적으로 상태 메시지 출력
+- 콘솔에만 출력 (로그 파일에는 기록되지 않음)
+- 설정으로 on/off 및 간격 조정 가능
+- 기본값: 10초마다 "메시지 수신 대기 중..." 출력
 
 ## Windows 호환성
 

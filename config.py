@@ -110,6 +110,14 @@ class Config:
     def KEY_FIELD(self) -> str:
         return self._config_data['filtering']['key_field']
     
+    @property
+    def HEARTBEAT_ENABLED(self) -> bool:
+        return self._config_data['heartbeat']['enabled']
+    
+    @property
+    def HEARTBEAT_INTERVAL_SECONDS(self) -> int:
+        return self._config_data['heartbeat']['interval_seconds']
+    
     def get_redis_config(self) -> Dict[str, Any]:
         """Redis 연결 설정을 반환합니다."""
         config = {

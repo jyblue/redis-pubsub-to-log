@@ -3,6 +3,7 @@ Redis 서비스 모듈
 """
 import redis
 import time
+import threading
 from typing import Callable, Optional
 from config import Config
 from utils.logger import Logger
@@ -15,6 +16,10 @@ class RedisService:
         self.redis_client = None
         self.pubsub = None
         self.logger = Logger('RedisService')
+        self.config = Config()
+        self.heartbeat_thread = None
+        self.last_message_time = time.time()
+        self.running = False
         self._connect()
     
     def _connect(self):
@@ -46,12 +51,20 @@ class RedisService:
             message_handler: 메시지 처리 함수
         """
         try:
+            self.running = True
             self.logger.info("메시지 수신 대기 중...")
+            
+            # Heartbeat 스레드 시작
+            if self.config.HEARTBEAT_ENABLED:
+                self._start_heartbeat()
             
             for message in self.pubsub.listen():
                 if message['type'] == 'pmessage':
                     channel = message['channel'].decode('utf-8')
                     data = message['data'].decode('utf-8')
+                    
+                    # 마지막 메시지 수신 시간 업데이트
+                    self.last_message_time = time.time()
                     
                     self.logger.debug(f"메시지 수신: 채널={channel}, 데이터={data}")
                     
@@ -64,6 +77,10 @@ class RedisService:
         except Exception as e:
             self.logger.error(f"메시지 수신 중 오류: {str(e)}")
             raise
+        finally:
+            self.running = False
+            if self.heartbeat_thread:
+                self.heartbeat_thread.join()
     
     def _reconnect(self):
         """Redis 재연결을 시도합니다."""
@@ -84,6 +101,31 @@ class RedisService:
         except Exception as e:
             self.logger.error(f"Redis 재연결 실패: {str(e)}")
             raise
+    
+    def _start_heartbeat(self):
+        """Heartbeat 스레드를 시작합니다."""
+        self.heartbeat_thread = threading.Thread(target=self._heartbeat_worker, daemon=True)
+        self.heartbeat_thread.start()
+    
+    def _heartbeat_worker(self):
+        """Heartbeat 워커 스레드입니다."""
+        while self.running:
+            try:
+                time.sleep(self.config.HEARTBEAT_INTERVAL_SECONDS)
+                
+                if not self.running:
+                    break
+                
+                # 마지막 메시지 수신 후 경과 시간 계산
+                elapsed_time = time.time() - self.last_message_time
+                
+                # 설정된 간격보다 오래 메시지가 없으면 heartbeat 메시지 출력
+                if elapsed_time >= self.config.HEARTBEAT_INTERVAL_SECONDS:
+                    print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] 메시지 수신 대기 중...")
+                    
+            except Exception as e:
+                self.logger.error(f"Heartbeat 스레드 오류: {str(e)}")
+                break
     
     def close(self):
         """Redis 연결을 종료합니다."""
