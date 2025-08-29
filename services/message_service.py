@@ -80,11 +80,9 @@ class MessageService:
         """
         try:
             # 로그 메시지 생성
+            import datetime
             log_entry = {
-                'timestamp': self.logger.logger.handlers[0].formatter.formatTime(
-                    self.logger.logger.handlers[0].formatter, 
-                    self.logger.logger.handlers[0].formatter.converter()
-                ),
+                'timestamp': datetime.datetime.now().isoformat(),
                 'channel': channel,
                 'key': key_value,
                 'message': message_data
