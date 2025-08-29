@@ -99,6 +99,18 @@ class Config:
         return self._config_data['redis']['exponential_backoff']['multiplier']
     
     @property
+    def REDIS_CONNECTION_HEARTBEAT_ENABLED(self) -> bool:
+        return self._config_data['redis']['connection_heartbeat']['enabled']
+    
+    @property
+    def REDIS_CONNECTION_HEARTBEAT_INTERVAL_SECONDS(self) -> int:
+        return self._config_data['redis']['connection_heartbeat']['interval_seconds']
+    
+    @property
+    def REDIS_CONNECTION_HEARTBEAT_TIMEOUT_SECONDS(self) -> int:
+        return self._config_data['redis']['connection_heartbeat']['timeout_seconds']
+    
+    @property
     def LOG_DIR(self) -> str:
         return self._config_data['logging']['log_dir']
     

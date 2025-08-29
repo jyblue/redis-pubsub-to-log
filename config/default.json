@@ -13,6 +13,11 @@
       "base_delay": 1.0,
       "max_delay": 60.0,
       "multiplier": 2.0
+    },
+    "connection_heartbeat": {
+      "enabled": true,
+      "interval_seconds": 30,
+      "timeout_seconds": 5
     }
   },
   "logging": {

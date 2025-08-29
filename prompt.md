@@ -56,3 +56,11 @@
 - Redis 재연결 시 exponential backoff 알고리즘 구현
 - 설정 파일에 exponential backoff 관련 설정 추가
 - 재시도 간격이 지수적으로 증가하도록 수정
+
+## PROMPT-008
+**명령**: redis connection heartbeat를 사용하도록 수정하세요
+
+**수행 작업**:
+- Redis 연결에 heartbeat 기능 추가
+- 연결 상태를 주기적으로 확인하여 끊김 감지
+- 설정 파일에 connection heartbeat 관련 설정 추가
