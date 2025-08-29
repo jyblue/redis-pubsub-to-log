@@ -26,10 +26,9 @@ class RedisService:
     def _connect(self):
         """Redis에 연결합니다."""
         try:
-            config = Config()
-            self.redis_client = redis.Redis(**config.get_redis_config())
+            self.redis_client = redis.Redis(**self.config.get_redis_config())
             self.pubsub = self.redis_client.pubsub()
-            self.logger.info(f"Redis 연결 성공: {config.REDIS_HOST}:{config.REDIS_PORT}")
+            self.logger.info(f"Redis 연결 성공: {self.config.REDIS_HOST}:{self.config.REDIS_PORT}")
         except Exception as e:
             self.logger.error(f"Redis 연결 실패: {str(e)}")
             raise

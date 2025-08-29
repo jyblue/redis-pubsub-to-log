@@ -50,81 +50,95 @@ class Config:
     
 
     
+    def _get_nested_value(self, *keys, default=None):
+        """중첩된 딕셔너리에서 값을 안전하게 가져옵니다."""
+        value = self._config_data
+        for key in keys:
+            if isinstance(value, dict) and key in value:
+                value = value[key]
+            else:
+                return default
+        return value
+    
+    # Redis 설정
     @property
     def REDIS_HOST(self) -> str:
-        return self._config_data['redis']['host']
+        return self._get_nested_value('redis', 'host')
     
     @property
     def REDIS_PORT(self) -> int:
-        return self._config_data['redis']['port']
+        return self._get_nested_value('redis', 'port')
     
     @property
     def REDIS_DB(self) -> int:
-        return self._config_data['redis']['db']
+        return self._get_nested_value('redis', 'db')
     
     @property
     def REDIS_PASSWORD(self):
-        return self._config_data['redis'].get('password')
+        return self._get_nested_value('redis', 'password')
     
     @property
     def REDIS_RETRY_ON_TIMEOUT(self) -> bool:
-        return self._config_data['redis']['retry_on_timeout']
+        return self._get_nested_value('redis', 'retry_on_timeout')
     
     @property
     def REDIS_RETRY_ON_ERROR(self) -> bool:
-        return self._config_data['redis']['retry_on_error']
+        return self._get_nested_value('redis', 'retry_on_error')
     
     @property
     def REDIS_RETRY(self) -> int:
-        return self._config_data['redis']['retry']
+        return self._get_nested_value('redis', 'retry')
     
     @property
     def REDIS_EXPONENTIAL_BACKOFF_BASE_DELAY(self) -> float:
-        return self._config_data['redis']['exponential_backoff']['base_delay']
+        return self._get_nested_value('redis', 'exponential_backoff', 'base_delay')
     
     @property
     def REDIS_EXPONENTIAL_BACKOFF_MAX_DELAY(self) -> float:
-        return self._config_data['redis']['exponential_backoff']['max_delay']
+        return self._get_nested_value('redis', 'exponential_backoff', 'max_delay')
     
     @property
     def REDIS_EXPONENTIAL_BACKOFF_MULTIPLIER(self) -> float:
-        return self._config_data['redis']['exponential_backoff']['multiplier']
+        return self._get_nested_value('redis', 'exponential_backoff', 'multiplier')
     
+    # 로깅 설정
     @property
     def LOG_DIR(self) -> str:
-        return self._config_data['logging']['log_dir']
+        return self._get_nested_value('logging', 'log_dir')
     
     @property
     def MESSAGE_LOG_DIR(self) -> str:
-        return self._config_data['logging']['message_log_dir']
+        return self._get_nested_value('logging', 'message_log_dir')
     
     @property
     def LOG_FILE_SIZE_MB(self) -> int:
-        return self._config_data['logging']['log_file_size_mb']
+        return self._get_nested_value('logging', 'log_file_size_mb')
     
     @property
     def LOG_BACKUP_COUNT(self) -> int:
-        return self._config_data['logging']['log_backup_count']
+        return self._get_nested_value('logging', 'log_backup_count')
     
+    # 필터링 설정
     @property
     def TARGET_FIELD(self) -> str:
-        return self._config_data['filtering']['target_field']
+        return self._get_nested_value('filtering', 'target_field')
     
     @property
     def TARGET_VALUES(self) -> list:
-        return self._config_data['filtering']['target_values']
+        return self._get_nested_value('filtering', 'target_values')
     
     @property
     def KEY_FIELD(self) -> str:
-        return self._config_data['filtering']['key_field']
+        return self._get_nested_value('filtering', 'key_field')
     
+    # Heartbeat 설정
     @property
     def HEARTBEAT_ENABLED(self) -> bool:
-        return self._config_data['heartbeat']['enabled']
+        return self._get_nested_value('heartbeat', 'enabled')
     
     @property
     def HEARTBEAT_INTERVAL_SECONDS(self) -> int:
-        return self._config_data['heartbeat']['interval_seconds']
+        return self._get_nested_value('heartbeat', 'interval_seconds')
     
     def get_redis_config(self) -> Dict[str, Any]:
         """Redis 연결 설정을 반환합니다."""
@@ -135,7 +149,6 @@ class Config:
             'retry_on_timeout': self.REDIS_RETRY_ON_TIMEOUT,
             'retry_on_error': self.REDIS_RETRY_ON_ERROR,
             'retry': self.REDIS_RETRY,
-            'backoff': self.REDIS_BACKOFF,
         }
         
         if self.REDIS_PASSWORD:
