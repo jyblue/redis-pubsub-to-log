@@ -55,6 +55,14 @@ python main.py -c my_config.json
 
 **주의**: 설정 파일이 없거나 JSON 형식이 잘못된 경우 애플리케이션이 종료됩니다.
 
+또한 다음 환경변수로 설정값을 재정의할 수 있습니다:
+
+- `APP_CONFIG`: 설정 파일 경로(상대/절대). 기본값 `config/default.json`
+- `APP_BASE_DIR`: 상대 로그 경로 기준 디렉토리. 기본값 현재 작업 디렉토리
+- `LOG_DIR`, `MESSAGE_LOG_DIR`, `LOG_FILE_SIZE_MB`, `LOG_BACKUP_COUNT`
+- `REDIS_HOST`, `REDIS_PORT`, `REDIS_DB`, `REDIS_PASSWORD`, `REDIS_RETRY_ON_TIMEOUT`, `REDIS_RETRY_ON_ERROR`, `REDIS_RETRY`
+- `HEARTBEAT_ENABLED`, `HEARTBEAT_INTERVAL_SECONDS`
+
 ### 3. 애플리케이션 실행
 
 ```bash
@@ -236,6 +244,51 @@ message/                 # Redis 메시지 로그
 - 채널명과 키 값의 특수문자를 `_`로 대체하여 Windows 폴더명 호환
 - 지원하지 않는 문자: `<`, `>`, `:`, `"`, `/`, `\`, `|`, `?`, `*`
 - 예: `test:channel:2` → `test_channel_2`
+
+상대 경로는 OS에 따라 자동으로 정규화되며, 절대 경로도 그대로 지원됩니다.
+
+## Docker로 실행 (Ubuntu 20.04/22.04, Windows/Linux 모두 지원)
+
+### Docker Compose 사용
+
+```bash
+docker compose up --build
+```
+
+생성되는 볼륨/마운트:
+
+- `./config` → 컨테이너 `/app/config` (읽기 전용)
+- `./message` → 컨테이너 `/data/message`
+- `./logs` → 컨테이너 `/data/logs`
+
+컨테이너에서는 `APP_BASE_DIR=/data`로 설정되어 상대 경로(`message`, `logs`)가 `/data` 하위로 저장됩니다. 호스트에서는 Windows와 Linux 모두에서 동일한 디렉토리에 로그가 생성됩니다.
+
+### 수동 Docker 빌드/실행
+
+```bash
+docker build -t redis-pubsub-logger .
+docker run --rm \
+  -e REDIS_HOST=host.docker.internal \
+  -e APP_BASE_DIR=/data \
+  -v $(pwd)/message:/data/message \
+  -v $(pwd)/logs:/data/logs \
+  -v $(pwd)/config:/app/config:ro \
+  redis-pubsub-logger
+```
+
+Windows PowerShell에서 경로 마운트 예:
+
+```powershell
+docker run --rm `
+  -e REDIS_HOST=host.docker.internal `
+  -e APP_BASE_DIR=/data `
+  -v ${PWD}/message:/data/message `
+  -v ${PWD}/logs:/data/logs `
+  -v ${PWD}/config:/app/config:ro `
+  redis-pubsub-logger
+```
+
+참고: Linux에서 호스트 Redis를 사용하려면 `REDIS_HOST`에 호스트 IP를 지정하세요. Compose를 사용하면 서비스명 `redis`로 자동 연결됩니다.
 
 ## 개발 가이드
 
