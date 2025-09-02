@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+
+  app:
+    build: .
+    container_name: redis-pubsub-logger
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - APP_BASE_DIR=/data
+      - APP_CONFIG=config/default.json
+    volumes:
+      - ./config:/app/config:ro
+      - ./message:/data/message
+      - ./logs:/data/logs
+    command: ["python", "main.py", "--config", "config/default.json"]
