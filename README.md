@@ -32,13 +32,66 @@ redis-pubsub-to-log/
 
 ## 설치 및 실행
 
-### 1. 의존성 설치
+### 방법 1: Docker 사용 (권장)
+
+Ubuntu 20.04/22.04 환경에서 Docker를 사용한 실행을 권장합니다.
+
+#### 1. Docker 설치 확인
+
+```bash
+# Docker 설치 확인
+docker --version
+docker-compose --version
+```
+
+#### 2. 자동 실행 스크립트 사용
+
+```bash
+# 실행 권한 부여
+chmod +x docker-run.sh
+
+# Docker로 서비스 시작
+./docker-run.sh
+```
+
+#### 3. 수동 Docker 실행
+
+```bash
+# 로그 디렉토리 생성
+mkdir -p logs message
+
+# Docker Compose로 서비스 시작
+docker-compose up --build -d
+
+# 서비스 상태 확인
+docker-compose ps
+
+# 로그 확인
+docker-compose logs -f redis-logger
+
+# 서비스 중지
+docker-compose down
+```
+
+#### 4. 테스트 메시지 발송
+
+```bash
+# 테스트 스크립트 실행
+./docker-test.sh
+
+# 또는 수동 실행
+docker-compose --profile test run --rm redis-test
+```
+
+### 방법 2: 직접 Python 실행
+
+#### 1. 의존성 설치
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. 설정 파일 준비
+#### 2. 설정 파일 준비
 
 설정 파일이 필수입니다. 기본 설정 파일 `config/default.json`이 제공되며, 필요에 따라 수정하거나 새로운 설정 파일을 생성할 수 있습니다.
 
@@ -55,7 +108,7 @@ python main.py -c my_config.json
 
 **주의**: 설정 파일이 없거나 JSON 형식이 잘못된 경우 애플리케이션이 종료됩니다.
 
-### 3. 애플리케이션 실행
+#### 3. 애플리케이션 실행
 
 ```bash
 python main.py
@@ -206,6 +259,29 @@ message/                 # Redis 메시지 로그
 - `"ERROR_CRITICAL"` → `^ERROR.*` 패턴과 일치
 - `"WARN_IMPORTANT"` → `^WARN.*` 패턴과 일치
 - `"STATUS"` → `STATUS` 패턴과 일치
+
+## Docker 환경 정보
+
+### 지원 환경
+- **Ubuntu 20.04 LTS**
+- **Ubuntu 22.04 LTS**
+- **Docker 20.10+**
+- **Docker Compose 2.0+**
+
+### Docker 서비스 구성
+- **redis**: Redis 7 Alpine 이미지 기반 서버
+- **redis-logger**: Python 3.10 기반 로깅 애플리케이션
+- **redis-test**: 테스트 메시지 발송용 컨테이너
+
+### Docker 볼륨 마운트
+- `./config:/app/config:ro` - 설정 파일 (읽기 전용)
+- `./logs:/app/logs` - 시스템 로그
+- `./message:/app/message` - 메시지 로그
+
+### Docker 네트워크
+- `redis-network`: 브리지 네트워크로 컨테이너 간 통신
+- Redis 서버: `redis:6379` (내부 네트워크)
+- 외부 접근: `localhost:6379`
 
 ## 로그 Rolling
 

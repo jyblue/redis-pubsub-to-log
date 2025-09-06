@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: redis-pubsub-server
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - redis-network
+
+  redis-logger:
+    build: .
+    container_name: redis-pubsub-logger
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./config:/app/config:ro
+      - ./logs:/app/logs
+      - ./message:/app/message
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - redis-network
+    command: ["python", "main.py", "--config", "config/default.json"]
+
+  redis-test:
+    build: .
+    container_name: redis-pubsub-test
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./config:/app/config:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - redis-network
+    command: ["python", "test_redis_pubsub.py"]
+    profiles:
+      - test
+
+volumes:
+  redis_data:
+
+networks:
+  redis-network:
+    driver: bridge

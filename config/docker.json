@@ -1,0 +1,32 @@
+{
+  "redis": {
+    "host": "redis",
+    "port": 6379,
+    "db": 0,
+    "password": null,
+    "retry_on_timeout": true,
+    "retry_on_error": true,
+    "retry": 3,
+    "exponential_backoff": {
+      "base_delay": 1.0,
+      "max_delay": 60.0,
+      "multiplier": 2.0
+    }
+  },
+  "logging": {
+    "log_dir": "logs",
+    "message_log_dir": "message",
+    "log_file_size_mb": 10,
+    "log_backup_count": 5
+  },
+  "heartbeat": {
+    "enabled": true,
+    "interval_seconds": 10
+  },
+  "filtering": {
+    "target_field": "target",
+    "target_values": ["STATUS", "EVENT"],
+    "key_field": "id",
+    "use_regex": false
+  }
+}

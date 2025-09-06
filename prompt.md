@@ -97,3 +97,13 @@
 - GitHub 원격 저장소 생성
 - 로컬 저장소를 GitHub에 push
 - Public 저장소로 설정
+
+## PROMPT-013
+**명령**: ubuntu 20.04, 22.04 환경에서 docker 기반으로 실행할 수 있도록 호환성을 점검하고 필요한 부분을 수정하세요.
+
+**수행 작업**:
+- Ubuntu 20.04/22.04 Docker 호환성 점검
+- Dockerfile 생성 및 최적화
+- docker-compose.yml 생성
+- Docker 실행 가이드 문서화
+- Ubuntu 환경 테스트 및 검증
